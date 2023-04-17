@@ -1,20 +1,21 @@
 package kafka.boardproject.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
+import kafka.boardproject.dto.BoardDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
 
 @Getter
 @Entity
 @NoArgsConstructor
-public class Board {
+public class Board extends Timestamped{
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private int ID;
 
     private String title;
 
@@ -22,11 +23,19 @@ public class Board {
 
     private String author;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAtDATE;
+    private String pw;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date modifiedAtDATE;
+    public Board(BoardDto boardDto) {
+        this.title = boardDto.getTitle();
+        this.content = boardDto.getContent();
+        this.author = boardDto.getAuthor();
+        this.pw = boardDto.getPw();
+    }
 
-
+    public void update(BoardDto boardDto) {
+        this.title = boardDto.getTitle();
+        this.content = boardDto.getContent();
+        this.author = boardDto.getAuthor();
+        this.pw = boardDto.getPw();
+    }
 }
