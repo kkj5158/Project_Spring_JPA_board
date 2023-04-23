@@ -21,21 +21,32 @@ public class Board extends Timestamped{
 
     private String content;
 
-    private String author;
+    @ManyToOne
+    @JoinColumn(name = "User_username", insertable = false, updatable = false)
+    private User user;
+
+    @Column(name = "User_username")
+    private String username;
 
     private String pw;
 
     public Board(BoardDto boardDto) {
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
-        this.author = boardDto.getAuthor();
         this.pw = boardDto.getPw();
+    }
+
+    public Board(BoardDto boardDto, String username) {
+        this.title = boardDto.getTitle();
+        this.content = boardDto.getContent();
+        this.pw = boardDto.getPw();
+        this.username = username;
+
     }
 
     public void update(BoardDto boardDto) {
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
-        this.author = boardDto.getAuthor();
         this.pw = boardDto.getPw();
     }
 }
