@@ -1,13 +1,13 @@
-package kafka.boardproject.controller;
+package kafka.boardproject.sys.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
-import kafka.boardproject.dto.DefaultRes;
-import kafka.boardproject.dto.LoginRequsetDto;
-import kafka.boardproject.dto.SignupRequsetDto;
-import kafka.boardproject.http.ResponseMessage;
-import kafka.boardproject.http.StatusCode;
-import kafka.boardproject.service.UserService;
-import lombok.NoArgsConstructor;
+import jakarta.validation.Valid;
+import kafka.boardproject.sys.dto.http.DefaultRes;
+import kafka.boardproject.sys.dto.LoginRequsetDto;
+import kafka.boardproject.sys.dto.SignupRequsetDto;
+import kafka.boardproject.sys.dto.http.ResponseMessage;
+import kafka.boardproject.sys.dto.http.StatusCode;
+import kafka.boardproject.sys.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity signup(SignupRequsetDto signupRequestDto) {
+    public ResponseEntity signup(@Valid SignupRequsetDto signupRequestDto) {
         String status = userService.signup(signupRequestDto);
         return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.CREATED_USER), HttpStatus.OK);
 

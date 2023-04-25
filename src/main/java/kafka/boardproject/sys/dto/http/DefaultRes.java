@@ -1,4 +1,4 @@
-package kafka.boardproject.dto;
+package kafka.boardproject.sys.dto.http;
 
 import lombok.*;
 

@@ -1,14 +1,12 @@
-package kafka.boardproject.dto;
+package kafka.boardproject.sys.dto;
 
-import jakarta.persistence.*;
-import kafka.boardproject.entity.Board;
+import kafka.boardproject.sys.entity.Board;
+import kafka.boardproject.sys.entity.Comment;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -20,9 +18,7 @@ public class BoardDto {
 
     private String content;
 
-    private String author;
-
-    private String pw;
+    private List<Comment> comments;
 
     private LocalDateTime createdAt;
 
@@ -32,8 +28,8 @@ public class BoardDto {
         this.ID = board.getID();
         this.title = board.getTitle();
         this.content = board.getContent();
-        this.author = board.getPw();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
+        this.comments = board.getComments();
     }
 }

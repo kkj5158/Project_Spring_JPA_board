@@ -1,11 +1,12 @@
-package kafka.boardproject.service;
+package kafka.boardproject.sys.service;
 
 import jakarta.servlet.http.HttpServletResponse;
-import kafka.boardproject.dto.LoginRequsetDto;
-import kafka.boardproject.dto.SignupRequsetDto;
-import kafka.boardproject.entity.User;
-import kafka.boardproject.jwt.JWTUtil;
-import kafka.boardproject.repository.UserRepository;
+import kafka.boardproject.sys.dto.LoginRequsetDto;
+import kafka.boardproject.sys.dto.SignupRequsetDto;
+import kafka.boardproject.sys.entity.User;
+import kafka.boardproject.sec.jwt.JWTUtil;
+import kafka.boardproject.sys.entity.UserRoleEnum;
+import kafka.boardproject.sys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,17 @@ public class UserService {
             throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
         }
 
-        User user = new User(username, password);
+        // 사용자 ROLE 확인
+        UserRoleEnum role = UserRoleEnum.USER;
+
+        if (signupRequestDto.isAdmin()) {
+            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+            }
+            role = UserRoleEnum.ADMIN;
+        }
+
+        User user = new User(username, password, role);
 
         userRepository.save(user);
 
@@ -54,6 +65,8 @@ public class UserService {
         if(!user.getPassword().equals(password)){
             throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
+        System.out.println(user.getUsername());
 
         response.addHeader(JWTUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
     }

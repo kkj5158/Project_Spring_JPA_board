@@ -1,6 +1,6 @@
-package kafka.boardproject.repository;
+package kafka.boardproject.sys.repository;
 
-import kafka.boardproject.entity.Board;
+import kafka.boardproject.sys.entity.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

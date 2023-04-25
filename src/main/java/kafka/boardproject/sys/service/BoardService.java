@@ -1,14 +1,15 @@
-package kafka.boardproject.service;
+package kafka.boardproject.sys.service;
 
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import kafka.boardproject.dto.BoardDto;
-import kafka.boardproject.entity.Board;
-import kafka.boardproject.entity.User;
-import kafka.boardproject.jwt.JWTUtil;
-import kafka.boardproject.repository.BoardRepository;
-import kafka.boardproject.repository.UserRepository;
+import kafka.boardproject.sys.dto.BoardDto;
+import kafka.boardproject.sys.entity.Board;
+import kafka.boardproject.sys.entity.User;
+import kafka.boardproject.sec.jwt.JWTUtil;
+import kafka.boardproject.sys.entity.UserRoleEnum;
+import kafka.boardproject.sys.repository.BoardRepository;
+import kafka.boardproject.sys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +28,15 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     public List<Board> getBoards() {
+
         return boardRepository.findAllByOrderByCreatedAtDesc();
+
     }
 
     @Transactional(readOnly = true)
     public Board getBoardbyid(int id) {
 
-        Board board = boardRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 게시판이 존재하지 않습니다.") );
+        Board board = boardRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 게시글이 존재하지 않습니다.") );
 
         return board;
     }
@@ -64,7 +67,8 @@ public class BoardService {
 
             return boardRepository.save(board);
         } else {
-            return null;
+            // 토큰이 일치하지 않는다.
+            throw new IllegalArgumentException("Token Error");
         }
 
 
@@ -94,22 +98,33 @@ public class BoardService {
             // 요청 받은 id 를 게시판 찾기
             Board board = boardRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 게시판이 존재하지 않습니다.") );
 
+            // 로그인한 유저가 관리자 이거나, 게시물을 작성한 유저여야만 수정이 가능하다.
+
+            if(board.getUsername().equals(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)){
+
+                board.update(boardDto);
+
+                boardRepository.save(board);
+
+                return board;
+
+            }
+            else{
+                // 아이디가 일치하지 않는다. 관리자가 아니다.
+                throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
+            }
+
             // 요청받은 DTO 로 DB에 업데이트 할 객체 만들기
 
-            board.update(boardDto);
-
-            boardRepository.save(board);
-
-            return board;
 
         } else {
-            return null;
+            throw new IllegalArgumentException("Token Error");
         }
 
 
     }
     @Transactional
-    public String deleteBoard(int id,HttpServletRequest request) {
+    public Board deleteBoard(int id,HttpServletRequest request) {
 
         String token = jwtUtil.resolveToken(request);
         Claims claims;
@@ -131,12 +146,26 @@ public class BoardService {
             // 요청 받은 id 를 게시판 찾기
             Board board = boardRepository.findById(id).orElseThrow(() ->  new IllegalArgumentException("해당 게시판이 존재하지 않습니다.") );
 
-            // 요청받은 게시판 삭제하기
-            boardRepository.deleteById(id);
-            return "success";
+
+            // 로그인한 유저가 관리자 이거나, 게시물을 작성한 유저여야만 수정이 가능하다.
+
+            if(board.getUsername().equals(user.getUsername()) || user.getRole().equals(UserRoleEnum.ADMIN)){
+
+                // 요청받은 게시판 삭제하기
+                boardRepository.deleteById(id);
+                System.out.println("삭제 완료");
+                return board;
+            }
+            else{
+                // 아이디가 일치하지 않는다. 관리자가 아니다.
+                System.out.println("삭제 실패");
+
+                throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
+
+            }
 
         } else {
-            return "fail";
+            throw new IllegalArgumentException("Token Error");
         }
 
 

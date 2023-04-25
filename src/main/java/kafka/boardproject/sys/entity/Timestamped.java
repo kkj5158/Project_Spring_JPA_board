@@ -1,4 +1,4 @@
-package kafka.boardproject.entity;
+package kafka.boardproject.sys.entity;
 
 
 import jakarta.persistence.EntityListeners;

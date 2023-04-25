@@ -1,13 +1,12 @@
-package kafka.boardproject.entity;
+package kafka.boardproject.sys.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import kafka.boardproject.dto.BoardDto;
+import kafka.boardproject.sys.dto.BoardDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
-import java.util.Date;
+import java.util.List;
 
 @Getter
 @Entity
@@ -27,19 +26,19 @@ public class Board extends Timestamped{
 
     @Column(name = "User_username")
     private String username;
-
-    private String pw;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OrderBy("createdAt desc") // 댓글 정렬
+    private List<Comment> comments;
 
     public Board(BoardDto boardDto) {
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
-        this.pw = boardDto.getPw();
     }
 
     public Board(BoardDto boardDto, String username) {
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
-        this.pw = boardDto.getPw();
         this.username = username;
 
     }
@@ -47,6 +46,5 @@ public class Board extends Timestamped{
     public void update(BoardDto boardDto) {
         this.title = boardDto.getTitle();
         this.content = boardDto.getContent();
-        this.pw = boardDto.getPw();
     }
 }
