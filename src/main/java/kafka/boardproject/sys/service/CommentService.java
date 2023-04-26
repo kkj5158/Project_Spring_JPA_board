@@ -2,21 +2,16 @@ package kafka.boardproject.sys.service;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
-import kafka.boardproject.sec.jwt.JWTUtil;
-import kafka.boardproject.sys.dto.BoardDto;
+import kafka.boardproject.sec.jwt.JwtUtil;
 import kafka.boardproject.sys.dto.CommentDto;
-import kafka.boardproject.sys.entity.Board;
 import kafka.boardproject.sys.entity.Comment;
 import kafka.boardproject.sys.entity.User;
 import kafka.boardproject.sys.entity.UserRoleEnum;
-import kafka.boardproject.sys.repository.BoardRepository;
 import kafka.boardproject.sys.repository.CommentRepository;
 import kafka.boardproject.sys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +21,7 @@ public class CommentService {
 
     private final UserRepository userRepository;
 
-    private final JWTUtil jwtUtil;
+    private final JwtUtil jwtUtil;
 
 
     @Transactional

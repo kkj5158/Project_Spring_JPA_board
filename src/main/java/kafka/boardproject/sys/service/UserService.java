@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import kafka.boardproject.sys.dto.LoginRequsetDto;
 import kafka.boardproject.sys.dto.SignupRequsetDto;
 import kafka.boardproject.sys.entity.User;
-import kafka.boardproject.sec.jwt.JWTUtil;
+import kafka.boardproject.sec.jwt.JwtUtil;
 import kafka.boardproject.sys.entity.UserRoleEnum;
 import kafka.boardproject.sys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final JWTUtil jwtUtil;
+    private final JwtUtil jwtUtil;
     private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     public String signup(SignupRequsetDto signupRequestDto) {
@@ -68,6 +68,6 @@ public class UserService {
 
         System.out.println(user.getUsername());
 
-        response.addHeader(JWTUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
     }
 }

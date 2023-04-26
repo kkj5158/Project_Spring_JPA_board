@@ -1,4 +1,4 @@
-package kafka.boardproject.error;
+package kafka.boardproject.exception;
 
 import kafka.boardproject.sys.dto.http.DefaultRes;
 import kafka.boardproject.sys.dto.http.ResponseMessage;

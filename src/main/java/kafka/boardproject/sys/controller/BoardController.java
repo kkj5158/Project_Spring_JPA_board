@@ -25,7 +25,7 @@ public class BoardController {
 
     private final CommentService commentService;
 
-    @GetMapping("/board")
+    @GetMapping("/boards")
     public ResponseEntity getboard() {
 
         List<Board> boardList = boardService.getBoards();
@@ -47,7 +47,7 @@ public class BoardController {
 
     }
 
-    @GetMapping("/board/{id}")
+    @GetMapping("/boards/{id}")
     public ResponseEntity getBoardbyid(@PathVariable int id) {
 
         Board board = boardService.getBoardbyid(id);

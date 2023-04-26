@@ -19,7 +19,6 @@ public class CommentController {
 
     private final CommentService commentService;
 
-
     @PostMapping("/comment")
     public ResponseEntity createComment(HttpServletRequest request, @RequestBody CommentDto commentDto){
 
