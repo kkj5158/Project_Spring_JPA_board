@@ -1,10 +1,11 @@
 package kafka.boardproject.sys.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -20,6 +21,9 @@ public class User {
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardLike> boardLikes = new ArrayList<>();
 
     public void setRole(UserRoleEnum role) {
         this.role = role;

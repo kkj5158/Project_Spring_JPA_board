@@ -8,20 +8,25 @@ import kafka.boardproject.sec.jwt.JwtUtil;
 import kafka.boardproject.sys.entity.UserRoleEnum;
 import kafka.boardproject.sys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
-    public String signup(SignupRequsetDto signupRequestDto) {
+    public void signup(SignupRequsetDto signupRequestDto) {
 
         String username = signupRequestDto.getUsername();
         String password = signupRequestDto.getPassword();
@@ -47,8 +52,6 @@ public class UserService {
 
         userRepository.save(user);
 
-        return "Suceess";
-
     }
 
     @Transactional(readOnly = true)
@@ -57,17 +60,23 @@ public class UserService {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
-        // 사용자 확인
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("등록된 사용자가 없습니다.")
-        );
-        // 비밀번호 확인
-        if(!user.getPassword().equals(password)){
-            throw  new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        Optional<User> found = userRepository.findByUsername(username);
+
+        if (found.isEmpty()) {
+            throw new IllegalArgumentException("등록된 사용자가 없습니다.");
         }
 
-        System.out.println(user.getUsername());
+        User user = found.get();
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.getUsername()));
+
+        // 비밀번호 확인
+        if (!user.getPassword().equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+
+        String token = jwtUtil.createToken(user.getUsername());
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+
+
     }
 }

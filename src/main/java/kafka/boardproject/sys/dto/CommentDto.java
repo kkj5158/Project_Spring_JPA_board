@@ -18,6 +18,8 @@ public class CommentDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
+    private int commentLikes;
+
     public CommentDto(Comment comment) {
         this.ID = comment.getID();
         this.board_ID=comment.getBoardID();
@@ -25,5 +27,6 @@ public class CommentDto {
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
+        this.commentLikes = comment.getCommentLikes().size();
     }
 }

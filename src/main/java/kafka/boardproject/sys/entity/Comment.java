@@ -1,10 +1,14 @@
 package kafka.boardproject.sys.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import kafka.boardproject.sys.dto.CommentDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -31,12 +35,18 @@ public class Comment extends Timestamped{
     @Column(name = "Board_boardid")
     private int boardID;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommentLike> commentLikes = new ArrayList<>();
+
+
 
     public Comment(CommentDto commentDto , String username) {
         this.ID = commentDto.getID();
         this.content = commentDto.getContent();
-        this.username = username;
         this.boardID = commentDto.getBoard_ID();
+
+        this.username = username;
     }
 
     public void update(CommentDto commentDto) {

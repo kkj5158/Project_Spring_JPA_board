@@ -10,6 +10,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -27,10 +30,10 @@ public class WebSecurityConfig {
     private final JwtUtil jwtUtil;
 
 
-//    @Bean // 비밀번호 암호화 기능 등록
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
+    @Bean // 비밀번호 암호화 기능 등록
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     // h2 데이터 베이스 접근 허용
     @Bean
@@ -50,16 +53,21 @@ public class WebSecurityConfig {
         // 로그인 , 회원가입 페이지만 제한하기
 
 
-
-        http.authorizeHttpRequests().
-                requestMatchers("/user/**").permitAll().
-                requestMatchers("/boards/**").permitAll().
-                requestMatchers("/board/**").hasAnyRole("USER", "ADMIN").
-                requestMatchers("/comment/**").hasAnyRole("USER", "ADMIN").
-                anyRequest().authenticated().and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.authorizeRequests()
+                .requestMatchers("/user/**").permitAll()
+                .requestMatchers("/boards/**").permitAll()
+                .requestMatchers("/board/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/comment/").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/comment/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/board/*/like").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/comment/*/like").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated().and()
+                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // 경로가 제한된 페이지 접근시에 접근금지 페이지를 띄운다.
-        http.exceptionHandling().accessDeniedPage("/user/forbidden");
+        http.exceptionHandling()
+                .accessDeniedHandler((request, response, accessDeniedException) -> response.sendRedirect("/user/forbidden"));
 
         // 401 Error 처리, Authorization 즉, 인증과정에서 실패할 시 처리
         http.exceptionHandling().authenticationEntryPoint(customAuthenticationEntryPoint);

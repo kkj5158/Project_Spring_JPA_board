@@ -6,6 +6,7 @@ import kafka.boardproject.sys.dto.BoardDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,6 +31,10 @@ public class Board extends Timestamped{
     @OneToMany(mappedBy = "board", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("createdAt desc") // 댓글 정렬
     private List<Comment> comments;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardLike> boardLikes = new ArrayList<>();
 
     public Board(BoardDto boardDto) {
         this.title = boardDto.getTitle();

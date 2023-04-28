@@ -33,17 +33,16 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity signup(@Valid SignupRequsetDto signupRequestDto) {
-        String status = userService.signup(signupRequestDto);
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.CREATED_USER), HttpStatus.OK);
+        userService.signup(signupRequestDto);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.CREATED_USER));
 
     }
     @ResponseBody
     @PostMapping("/login")
     public ResponseEntity login(LoginRequsetDto loginRequestDto, HttpServletResponse response) {
-        userService.login(loginRequestDto, response);
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.LOGIN_SUCCESS), HttpStatus.OK);
+        userService.login(loginRequestDto,response);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.LOGIN_SUCCESS));
     }
-
 
     @GetMapping("/forbidden")
     public ModelAndView getForbidden() {

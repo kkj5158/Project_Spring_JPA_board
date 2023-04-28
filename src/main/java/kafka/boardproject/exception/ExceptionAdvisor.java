@@ -41,16 +41,13 @@ public class ExceptionAdvisor {
 
     }
 
-    // 로그인/검증 토큰 오류
+    // IllegalArgumentException 예외 처리
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity processLoginError(IllegalArgumentException exception) {
-        String errorMsg = exception.getMessage();
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        String errorMsg = ex.getMessage();
 
-        System.out.println(errorMsg);
-
-        return new ResponseEntity(DefaultRes.res(StatusCode.BAD_REQUEST, errorMsg), HttpStatus.BAD_REQUEST);
-
+        return ResponseEntity.badRequest().body(DefaultRes.res(StatusCode.BAD_REQUEST, errorMsg));
 
 
     }

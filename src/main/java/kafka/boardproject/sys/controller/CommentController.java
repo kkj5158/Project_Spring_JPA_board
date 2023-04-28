@@ -20,37 +20,36 @@ public class CommentController {
     private final CommentService commentService;
 
     @PostMapping("/comment")
-    public ResponseEntity createComment(HttpServletRequest request, @RequestBody CommentDto commentDto){
+    public ResponseEntity createComment(@RequestBody CommentDto commentDto){
 
-        Comment comment = commentService.createComment(commentDto, request);
+        Comment comment = commentService.createComment(commentDto);
 
         CommentDto commentresponseDto = new CommentDto(comment);
 
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_CREATE, commentresponseDto), HttpStatus.OK);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_CREATE, commentresponseDto));
 
     }
 
     @PutMapping("/comment/{id}")
-    public ResponseEntity updateComment(@PathVariable int id, @RequestBody CommentDto commentDto, HttpServletRequest request) {
+    public ResponseEntity updateComment(@PathVariable int id, @RequestBody CommentDto commentDto) {
 
-        Comment comment = commentService.updateComment(id, commentDto, request);
+        Comment comment = commentService.updateComment(id, commentDto);
 
         CommentDto commentresponseDto = new CommentDto(comment);
 
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_UPDATE, commentresponseDto), HttpStatus.OK);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_UPDATE, commentresponseDto));
 
 
     }
 
     @DeleteMapping("/comment/{id}")
-    public ResponseEntity deleteComment(@PathVariable int id, HttpServletRequest request) {
+    public ResponseEntity deleteComment(@PathVariable int id) {
 
-        Comment comment = commentService.deleteComment(id, request);
+        Comment comment = commentService.deleteComment(id);
 
         CommentDto commentresponseDto = new CommentDto(comment);
 
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_DELETE, commentresponseDto), HttpStatus.OK);
-
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.COMMENT_DELETE, commentresponseDto));
 
 
 

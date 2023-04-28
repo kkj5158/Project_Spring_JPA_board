@@ -47,6 +47,16 @@ public class ResponseMessage {
 
     public static final String COMMENT_DELETE_FAIL = "댓글 삭제 실패";
 
+    public static final String BOARD_LIKE_CREATE = "게시판 라이크 클릭";
+
+    public static final String BOARD_LIKE_DELETE = "게시판 라이크 해제";
+
+    public static final String COMMENT_LIKE_CREATE = "댓글 라이크 클릭";
+
+    public static final String COMMENT_LIKE_DELETE = "댓글 라이크 해제";
+
+
+
 
 
 

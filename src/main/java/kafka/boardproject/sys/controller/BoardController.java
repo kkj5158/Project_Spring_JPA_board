@@ -35,13 +35,13 @@ public class BoardController {
         if(boardList.size() == 0){
             List<BoardDto> boardDtoList = boardList.stream().map(BoardDto::new).collect(Collectors.toList());
 
-            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_GET_FAIL, boardDtoList), HttpStatus.OK);
+            return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_GET_FAIL, boardDtoList));
 
         }
         else{
             List<BoardDto> boardDtoList = boardList.stream().map(BoardDto::new).collect(Collectors.toList());
 
-            return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_GET, boardDtoList), HttpStatus.OK);
+            return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_GET, boardDtoList));
         }
 
 
@@ -54,45 +54,45 @@ public class BoardController {
 
         BoardDto reponseBoardDto = new BoardDto(board);
 
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_GET_ID, reponseBoardDto), HttpStatus.OK);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_GET_ID, reponseBoardDto));
 
 
     }
 
 
     @PostMapping("/board")
-    public ResponseEntity createboard(HttpServletRequest request, @RequestBody BoardDto boardDto){
+    public ResponseEntity createboard(@RequestBody BoardDto boardDto){
 
-        Board board = boardService.createBoard(boardDto, request);
+        Board board = boardService.createBoard(boardDto);
 
         BoardDto reponseBoardDto = new BoardDto(board);
 
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_CREATE, reponseBoardDto), HttpStatus.OK);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_CREATE, reponseBoardDto));
 
 
 
     }
 
     @PutMapping("/board/{id}")
-    public ResponseEntity updateBoard(@PathVariable int id, @RequestBody BoardDto boardDto, HttpServletRequest request) {
+    public ResponseEntity updateBoard(@PathVariable int id, @RequestBody BoardDto boardDto) {
 
-        Board board = boardService.update(id, boardDto, request);
+        Board board = boardService.update(id, boardDto);
 
         BoardDto reponseBoardDto = new BoardDto(board);
 
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_UPDATE, reponseBoardDto), HttpStatus.OK);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_UPDATE, reponseBoardDto));
 
 
     }
 
     @DeleteMapping("/board/{id}")
-    public ResponseEntity deleteBoard(@PathVariable int id, HttpServletRequest request) {
+    public ResponseEntity deleteBoard(@PathVariable int id) {
 
-        Board board = boardService.deleteBoard(id, request);
+        Board board = boardService.deleteBoard(id);
 
         BoardDto reponseBoardDto = new BoardDto(board);
 
-        return new ResponseEntity(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_DELETE,reponseBoardDto), HttpStatus.OK);
+        return ResponseEntity.ok(DefaultRes.res(StatusCode.OK, ResponseMessage.BOARD_DELETE, reponseBoardDto));
 
 
     }

@@ -11,10 +11,14 @@ import kafka.boardproject.sys.entity.UserRoleEnum;
 import kafka.boardproject.sys.repository.BoardRepository;
 import kafka.boardproject.sys.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,30 +46,29 @@ public class BoardService {
     }
 
     @Transactional
-    public Board createBoard(BoardDto boardDto, HttpServletRequest request) {
+    public Board createBoard(BoardDto boardDto) {
 
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         // 토큰이 있는 경우에만 관심상품 추가 가능
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
+        if (authentication.isAuthenticated())  {
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+            // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
+
             // 요청받은 DTO 로 DB에 저장할 객체 만들기
 
-            Board board = new Board(boardDto, user.getUsername());
+            Board board = new Board(boardDto, userDetails.getUsername());
 
-            return boardRepository.save(board);
+            boardRepository.save(board);
+
+            return board;
         } else {
             // 토큰이 일치하지 않는다.
             throw new IllegalArgumentException("Token Error");
@@ -76,22 +79,20 @@ public class BoardService {
     }
 
     @Transactional
-    public Board update(int id, BoardDto boardDto, HttpServletRequest request) {
+    public Board update(int id, BoardDto boardDto) {
 
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        // Spring Security에서 Authentication 객체 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 
         // 토큰이 있는 경우에만 관심상품 추가 가능
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
+        if (authentication.isAuthenticated()) {
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
@@ -124,22 +125,19 @@ public class BoardService {
 
     }
     @Transactional
-    public Board deleteBoard(int id,HttpServletRequest request) {
+    public Board deleteBoard(int id) {
 
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
 
         // 토큰이 있는 경우에만 관심상품 추가 가능
-        if (token != null) {
-            if (jwtUtil.validateToken(token)) {
-                // 토큰에서 사용자 정보 가져오기
-                claims = jwtUtil.getUserInfoFromToken(token);
-            } else {
-                throw new IllegalArgumentException("Token Error");
-            }
+        if (authentication.isAuthenticated()) {
+
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
 
             // 토큰에서 가져온 사용자 정보를 사용하여 DB 조회
-            User user = userRepository.findByUsername(claims.getSubject()).orElseThrow(
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(
                     () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
             );
 
@@ -158,7 +156,6 @@ public class BoardService {
             }
             else{
                 // 아이디가 일치하지 않는다. 관리자가 아니다.
-                System.out.println("삭제 실패");
 
                 throw new IllegalArgumentException("작성자만 삭제/수정할 수 있습니다.");
 
